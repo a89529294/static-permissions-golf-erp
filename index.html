@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>golf-erp Permission Map</title>
+    <title>高爾夫 權限對照表</title>
     <style>
         :root {
             --bg: #0f1419;
@@ -222,29 +222,11 @@
 </head>
 
 <body>
-    <h1>golf-erp Permission Map</h1>
-    <p class="subtitle">
-        Source: <code>src/utils/links.tsx</code>. Permission = user needs <strong>any one</strong> listed string (OR).
-        Admins (<code>isAdmin</code>) bypass all checks.
-        Only 練習場 / 高爾夫球 / 室內模擬器 also require the user to have ≥1 assigned store in that category.
+    <h1>高爾夫 權限對照表</h1>
+    權限 = 使用者只需要列出的 <strong>任一</strong> 權限. </br>
+    管理員跳過所有檢查. </br>
+    練習場 / 高爾夫球 / 室內模擬器 也需要使用者屬於 <strong>至少一個</strong> 分類下的商店.
     </p>
-
-    <div class="legend">
-        <div class="legend-item"><span class="dot store"></span> Store-required sections (noted in header)</div>
-        <div class="legend-item"><span class="dot admin"></span> Admin bypasses everything</div>
-    </div>
-
-    <div class="flow">
-        <h3>Two enforcement layers</h3>
-        <div class="flow-diagram">links.tsx (config only)
-            │
-            ├── sidebar.tsx ──────────────► hide/show menu items
-            │ ├── top-level: isLinkAllowed (permission + store for verticals)
-            │ └── sub-links: permission only
-            │
-            └── permission-guard.tsx ─────► block/allow page access (via index.tsx)
-            └── sub-link permission + store for vertical routes</div>
-    </div>
 
     <!-- member-management -->
     <section>
@@ -253,9 +235,9 @@
         </header>
         <table>
             <tr>
-                <th>Item</th>
-                <th>Path</th>
-                <th>Permission</th>
+                <th>名稱</th>
+                <th>路徑</th>
+                <th>任一權限</th>
             </tr>
             <tr class="section-row">
                 <td>會員管理 <span class="item-type">(分類)</span></td>
@@ -282,9 +264,9 @@
         </header>
         <table>
             <tr>
-                <th>Item</th>
-                <th>Path</th>
-                <th>Permission</th>
+                <th>名稱</th>
+                <th>路徑</th>
+                <th>任一權限</th>
             </tr>
             <tr class="page-row">
                 <td>教練管理 <span class="item-type">(頁面)</span></td>
@@ -301,9 +283,9 @@
         </header>
         <table>
             <tr>
-                <th>Item</th>
-                <th>Path</th>
-                <th>Permission</th>
+                <th>名稱</th>
+                <th>路徑</th>
+                <th>任一權限</th>
             </tr>
             <tr class="section-row">
                 <td>系統管理 <span class="item-type">(分類)</span></td>
@@ -350,9 +332,9 @@
         </header>
         <table>
             <tr>
-                <th>Item</th>
-                <th>Path</th>
-                <th>Permission</th>
+                <th>名稱</th>
+                <th>路徑</th>
+                <th>任一權限</th>
             </tr>
             <tr class="page-row">
                 <td>廠商管理 <span class="item-type">(頁面)</span></td>
@@ -369,9 +351,9 @@
         </header>
         <table>
             <tr>
-                <th>Item</th>
-                <th>Path</th>
-                <th>Permission</th>
+                <th>名稱</th>
+                <th>路徑</th>
+                <th>任一權限</th>
             </tr>
             <tr class="page-row">
                 <td>標籤管理 <span class="item-type">(頁面)</span></td>
@@ -386,22 +368,21 @@
         <header>
             <div>
                 <h2>室內模擬器</h2>
-                <div class="header-note">Section visibility + all routes require ≥1 assigned store
-                    (<code>allowedStores.simulator</code>)</div>
             </div>
-            <span class="badge store">Store required</span>
+            <span class="badge store">使用者至少屬於一個室內模擬器的廠商</span>
         </header>
         <table>
             <tr>
-                <th>Item</th>
-                <th>Path</th>
-                <th>Permission</th>
+                <th>名稱</th>
+                <th>路徑</th>
+                <th>任一權限</th>
             </tr>
             <tr class="section-row">
                 <td>室內模擬器 <span class="item-type">(分類)</span></td>
                 <td><code>/indoor-simulator/*</code></td>
                 <td><code>模擬器-基本操作</code> | <code>模擬器-報表</code> | <code>模擬器-贈送點數</code> | <code>模擬器-儲值優惠設定</code> |
-                    <code>模擬器-累積點數設定</code></td>
+                    <code>模擬器-累積點數設定</code>
+                </td>
             </tr>
             <tr class="page-row">
                 <td>會員管理 <span class="item-type">(頁面)</span></td>
@@ -461,22 +442,21 @@
         <header>
             <div>
                 <h2>高爾夫球</h2>
-                <div class="header-note">Section visibility + all routes require ≥1 assigned store
-                    (<code>allowedStores.golf</code>)</div>
             </div>
-            <span class="badge store">Store required</span>
+            <span class="badge store">使用者至少屬於一個高爾夫球的廠商</span>
         </header>
         <table>
             <tr>
-                <th>Item</th>
-                <th>Path</th>
-                <th>Permission</th>
+                <th>名稱</th>
+                <th>路徑</th>
+                <th>任一權限</th>
             </tr>
             <tr class="section-row">
                 <td>高爾夫球 <span class="item-type">(分類)</span></td>
                 <td><code>/golf/*</code></td>
                 <td><code>高爾夫球-基本操作</code> | <code>高爾夫球-報表</code> | <code>高爾夫球-贈送點數</code> | <code>高爾夫球-儲值優惠設定</code> |
-                    <code>高爾夫球-累積點數設定</code></td>
+                    <code>高爾夫球-累積點數設定</code>
+                </td>
             </tr>
             <tr class="page-row">
                 <td>場地管理 <span class="item-type">(頁面)</span></td>
@@ -516,22 +496,21 @@
         <header>
             <div>
                 <h2>練習場</h2>
-                <div class="header-note">Section visibility + all routes require ≥1 assigned store
-                    (<code>allowedStores.ground</code>)</div>
             </div>
-            <span class="badge store">Store required</span>
+            <span class="badge store">使用者至少屬於一個練習場的廠商</span>
         </header>
         <table>
             <tr>
-                <th>Item</th>
-                <th>Path</th>
-                <th>Permission</th>
+                <th>名稱</th>
+                <th>路徑</th>
+                <th>任一權限</th>
             </tr>
             <tr class="section-row">
                 <td>練習場 <span class="item-type">(分類)</span></td>
                 <td><code>/driving-range/*</code></td>
                 <td><code>練習場-基本操作</code> | <code>練習場-報表</code> | <code>練習場-贈送點數</code> | <code>練習場-儲值優惠設定</code> |
-                    <code>練習場-累積點數設定</code></td>
+                    <code>練習場-累積點數設定</code>
+                </td>
             </tr>
             <tr class="page-row">
                 <td>會員管理 <span class="item-type">(頁面)</span></td>
@@ -575,10 +554,6 @@
             </tr>
         </table>
     </section>
-
-    <p class="footer">
-        Open in a browser; use Print → Save as PDF or screenshot for PNG. Generated from links.tsx.
-    </p>
 </body>
 
 </html>
