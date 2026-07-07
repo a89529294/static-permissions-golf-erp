@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>golf-erp Permission Map</title>
+    <style>
+        :root {
+            --bg: #0f1419;
+            --surface: #1a2332;
+            --border: #2d3a4f;
+            --text: #e7ecf3;
+            --muted: #8b9cb3;
+            --accent: #f97316;
+            --store: #38bdf8;
+            --admin: #c084fc;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 2rem;
+            line-height: 1.5;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            margin: 0 0 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            margin-bottom: 2rem;
+            max-width: 900px;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding: 1rem 1.25rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        .dot.store {
+            background: var(--store);
+        }
+
+        .dot.admin {
+            background: var(--admin);
+        }
+
+        section {
+            margin-bottom: 1.5rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        section header {
+            padding: 1rem 1.25rem;
+            background: #243044;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        section header h2 {
+            margin: 0;
+            font-size: 1.1rem;
+            color: var(--accent);
+        }
+
+        .header-note {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-top: 0.35rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .badge.store {
+            background: rgba(56, 189, 248, 0.2);
+            color: var(--store);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        th,
+        td {
+            padding: 0.65rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+
+        th {
+            background: #1e2a3a;
+            color: var(--muted);
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr.section-row td {
+            background: rgba(249, 115, 22, 0.08);
+            font-weight: 600;
+        }
+
+        tr.page-row td:first-child {
+            color: var(--text);
+        }
+
+        .item-type {
+            color: var(--muted);
+            font-weight: 400;
+            font-size: 0.8em;
+        }
+
+        code {
+            background: rgba(0, 0, 0, 0.35);
+            padding: 0.1rem 0.35rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            word-break: break-word;
+        }
+
+        .flow {
+            margin-bottom: 2rem;
+            padding: 1.25rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+
+        .flow h3 {
+            margin: 0 0 1rem;
+            font-size: 1rem;
+        }
+
+        .flow-diagram {
+            font-family: ui-monospace, monospace;
+            font-size: 0.8rem;
+            line-height: 1.8;
+            color: var(--muted);
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        .footer {
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+
+        @media print {
+            body {
+                background: white;
+                color: black;
+                padding: 1rem;
+            }
+
+            section {
+                break-inside: avoid;
+                border-color: #ccc;
+            }
+
+            section header {
+                background: #eee;
+            }
+
+            th {
+                background: #f5f5f5;
+                color: #333;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>golf-erp Permission Map</h1>
+    <p class="subtitle">
+        Source: <code>src/utils/links.tsx</code>. Permission = user needs <strong>any one</strong> listed string (OR).
+        Admins (<code>isAdmin</code>) bypass all checks.
+        Only 練習場 / 高爾夫球 / 室內模擬器 also require the user to have ≥1 assigned store in that category.
+    </p>
+
+    <div class="legend">
+        <div class="legend-item"><span class="dot store"></span> Store-required sections (noted in header)</div>
+        <div class="legend-item"><span class="dot admin"></span> Admin bypasses everything</div>
+    </div>
+
+    <div class="flow">
+        <h3>Two enforcement layers</h3>
+        <div class="flow-diagram">links.tsx (config only)
+            │
+            ├── sidebar.tsx ──────────────► hide/show menu items
+            │ ├── top-level: isLinkAllowed (permission + store for verticals)
+            │ └── sub-links: permission only
+            │
+            └── permission-guard.tsx ─────► block/allow page access (via index.tsx)
+            └── sub-link permission + store for vertical routes</div>
+    </div>
+
+    <!-- member-management -->
+    <section>
+        <header>
+            <h2>會員管理</h2>
+        </header>
+        <table>
+            <tr>
+                <th>Item</th>
+                <th>Path</th>
+                <th>Permission</th>
+            </tr>
+            <tr class="section-row">
+                <td>會員管理 <span class="item-type">(分類)</span></td>
+                <td><code>/member-management/*</code></td>
+                <td><code>系統管理</code></td>
+            </tr>
+            <tr class="page-row">
+                <td>會員管理 <span class="item-type">(頁面)</span></td>
+                <td><code>/member-management/members</code></td>
+                <td><code>系統管理</code></td>
+            </tr>
+            <tr class="page-row">
+                <td>會員身分折扣管理 <span class="item-type">(頁面)</span></td>
+                <td><code>/member-management/discount-management</code></td>
+                <td><code>會員身分折扣管理</code></td>
+            </tr>
+        </table>
+    </section>
+
+    <!-- coach-management -->
+    <section>
+        <header>
+            <h2>教練管理</h2>
+        </header>
+        <table>
+            <tr>
+                <th>Item</th>
+                <th>Path</th>
+                <th>Permission</th>
+            </tr>
+            <tr class="page-row">
+                <td>教練管理 <span class="item-type">(頁面)</span></td>
+                <td><code>/coach-management</code></td>
+                <td><code>教練管理</code></td>
+            </tr>
+        </table>
+    </section>
+
+    <!-- system-management -->
+    <section>
+        <header>
+            <h2>系統管理</h2>
+        </header>
+        <table>
+            <tr>
+                <th>Item</th>
+                <th>Path</th>
+                <th>Permission</th>
+            </tr>
+            <tr class="section-row">
+                <td>系統管理 <span class="item-type">(分類)</span></td>
+                <td><code>/system-management/*</code></td>
+                <td><code>系統管理</code></td>
+            </tr>
+            <tr class="page-row">
+                <td>人員資料管理 <span class="item-type">(頁面)</span></td>
+                <td><code>/system-management/personnel-management</code></td>
+                <td><code>系統管理</code></td>
+            </tr>
+            <tr class="page-row">
+                <td>系統操作管理 <span class="item-type">(頁面)</span></td>
+                <td><code>/system-management/system-operation-management</code></td>
+                <td><code>系統管理</code></td>
+            </tr>
+            <tr class="page-row">
+                <td>功能權限管理 <span class="item-type">(頁面)</span></td>
+                <td><code>/system-management/app-permission-management</code></td>
+                <td><code>系統管理</code></td>
+            </tr>
+            <tr class="page-row">
+                <td>APP消費級距 <span class="item-type">(頁面)</span></td>
+                <td><code>/system-management/app-expenditure-level</code></td>
+                <td><code>系統管理</code></td>
+            </tr>
+            <tr class="page-row">
+                <td>Banner 設定 <span class="item-type">(頁面)</span></td>
+                <td><code>/system-management/banner-carousel</code></td>
+                <td><code>系統管理</code></td>
+            </tr>
+            <tr class="page-row">
+                <td>APP版本 <span class="item-type">(頁面)</span></td>
+                <td><code>/system-management/mobile-app-version</code></td>
+                <td><code>系統管理</code></td>
+            </tr>
+        </table>
+    </section>
+
+    <!-- store-management -->
+    <section>
+        <header>
+            <h2>廠商管理</h2>
+        </header>
+        <table>
+            <tr>
+                <th>Item</th>
+                <th>Path</th>
+                <th>Permission</th>
+            </tr>
+            <tr class="page-row">
+                <td>廠商管理 <span class="item-type">(頁面)</span></td>
+                <td><code>/store-management</code></td>
+                <td><code>廠商管理</code></td>
+            </tr>
+        </table>
+    </section>
+
+    <!-- equipment-management -->
+    <section>
+        <header>
+            <h2>標籤管理</h2>
+        </header>
+        <table>
+            <tr>
+                <th>Item</th>
+                <th>Path</th>
+                <th>Permission</th>
+            </tr>
+            <tr class="page-row">
+                <td>標籤管理 <span class="item-type">(頁面)</span></td>
+                <td><code>/equipment-management</code></td>
+                <td><code>廠商管理</code></td>
+            </tr>
+        </table>
+    </section>
+
+    <!-- indoor-simulator -->
+    <section>
+        <header>
+            <div>
+                <h2>室內模擬器</h2>
+                <div class="header-note">Section visibility + all routes require ≥1 assigned store
+                    (<code>allowedStores.simulator</code>)</div>
+            </div>
+            <span class="badge store">Store required</span>
+        </header>
+        <table>
+            <tr>
+                <th>Item</th>
+                <th>Path</th>
+                <th>Permission</th>
+            </tr>
+            <tr class="section-row">
+                <td>室內模擬器 <span class="item-type">(分類)</span></td>
+                <td><code>/indoor-simulator/*</code></td>
+                <td><code>模擬器-基本操作</code> | <code>模擬器-報表</code> | <code>模擬器-贈送點數</code> | <code>模擬器-儲值優惠設定</code> |
+                    <code>模擬器-累積點數設定</code></td>
+            </tr>
+            <tr class="page-row">
+                <td>會員管理 <span class="item-type">(頁面)</span></td>
+                <td><code>/indoor-simulator/member-management</code></td>
+                <td><code>模擬器-基本操作</code></td>
+            </tr>
+            <tr class="page-row">
+                <td>會員折扣管理 <span class="item-type">(頁面)</span></td>
+                <td><code>/indoor-simulator/member-discount-management</code></td>
+                <td><code>模擬器-基本操作</code></td>
+            </tr>
+            <tr class="page-row">
+                <td>場地管理 <span class="item-type">(頁面)</span></td>
+                <td><code>/indoor-simulator/site-management</code></td>
+                <td><code>模擬器-基本操作</code></td>
+            </tr>
+            <tr class="page-row">
+                <td>預約管理 <span class="item-type">(頁面)</span></td>
+                <td><code>/indoor-simulator/appointment-management</code></td>
+                <td><code>模擬器-基本操作</code></td>
+            </tr>
+            <tr class="page-row">
+                <td>儲值優惠設定 <span class="item-type">(頁面)</span></td>
+                <td><code>/indoor-simulator/cashback-settings</code></td>
+                <td><code>模擬器-儲值優惠設定</code></td>
+            </tr>
+            <tr class="page-row">
+                <td>優惠券管理 <span class="item-type">(頁面)</span></td>
+                <td><code>/indoor-simulator/coupon-management</code></td>
+                <td><code>模擬器-贈送點數</code></td>
+            </tr>
+            <tr class="page-row">
+                <td>優惠碼管理 <span class="item-type">(頁面)</span></td>
+                <td><code>/indoor-simulator/discount-code-management</code></td>
+                <td><code>系統管理</code> OR <code>模擬器-優惠碼管理</code></td>
+            </tr>
+            <tr class="page-row">
+                <td>累積點數設定 <span class="item-type">(頁面)</span></td>
+                <td><code>/indoor-simulator/reward-settings</code></td>
+                <td><code>模擬器-累積點數設定</code></td>
+            </tr>
+            <tr class="page-row">
+                <td>報修回報 <span class="item-type">(頁面)</span></td>
+                <td><code>/indoor-simulator/repair-report</code></td>
+                <td><code>模擬器-基本操作</code></td>
+            </tr>
+            <tr class="page-row">
+                <td>報表 <span class="item-type">(頁面)</span></td>
+                <td><code>/indoor-simulator/report</code></td>
+                <td><code>模擬器-報表</code></td>
+            </tr>
+        </table>
+    </section>
+
+    <!-- golf -->
+    <section>
+        <header>
+            <div>
+                <h2>高爾夫球</h2>
+                <div class="header-note">Section visibility + all routes require ≥1 assigned store
+                    (<code>allowedStores.golf</code>)</div>
+            </div>
+            <span class="badge store">Store required</span>
+        </header>
+        <table>
+            <tr>
+                <th>Item</th>
+                <th>Path</th>
+                <th>Permission</th>
+            </tr>
+            <tr class="section-row">
+                <td>高爾夫球 <span class="item-type">(分類)</span></td>
+                <td><code>/golf/*</code></td>
+                <td><code>高爾夫球-基本操作</code> | <code>高爾夫球-報表</code> | <code>高爾夫球-贈送點數</code> | <code>高爾夫球-儲值優惠設定</code> |
+                    <code>高爾夫球-累積點數設定</code></td>
+            </tr>
+            <tr class="page-row">
+                <td>場地管理 <span class="item-type">(頁面)</span></td>
+                <td><code>/golf/site-management</code></td>
+                <td><code>高爾夫球-基本操作</code></td>
+            </tr>
+            <tr class="page-row">
+                <td>邀約管理 <span class="item-type">(頁面)</span></td>
+                <td><code>/golf/invitation-management</code></td>
+                <td><code>高爾夫球-基本操作</code></td>
+            </tr>
+            <tr class="page-row">
+                <td>儲值優惠設定 <span class="item-type">(頁面)</span></td>
+                <td><code>/golf/cashback-settings</code></td>
+                <td><code>高爾夫球-儲值優惠設定</code></td>
+            </tr>
+            <tr class="page-row">
+                <td>優惠券管理 <span class="item-type">(頁面)</span></td>
+                <td><code>/golf/coupon-management</code></td>
+                <td><code>高爾夫球-贈送點數</code></td>
+            </tr>
+            <tr class="page-row">
+                <td>累積點數設定 <span class="item-type">(頁面)</span></td>
+                <td><code>/golf/reward-settings</code></td>
+                <td><code>高爾夫球-累積點數設定</code></td>
+            </tr>
+            <tr class="page-row">
+                <td>報修回報 <span class="item-type">(頁面)</span></td>
+                <td><code>/golf/repair-report</code></td>
+                <td><code>高爾夫球-基本操作</code></td>
+            </tr>
+        </table>
+    </section>
+
+    <!-- driving-range -->
+    <section>
+        <header>
+            <div>
+                <h2>練習場</h2>
+                <div class="header-note">Section visibility + all routes require ≥1 assigned store
+                    (<code>allowedStores.ground</code>)</div>
+            </div>
+            <span class="badge store">Store required</span>
+        </header>
+        <table>
+            <tr>
+                <th>Item</th>
+                <th>Path</th>
+                <th>Permission</th>
+            </tr>
+            <tr class="section-row">
+                <td>練習場 <span class="item-type">(分類)</span></td>
+                <td><code>/driving-range/*</code></td>
+                <td><code>練習場-基本操作</code> | <code>練習場-報表</code> | <code>練習場-贈送點數</code> | <code>練習場-儲值優惠設定</code> |
+                    <code>練習場-累積點數設定</code></td>
+            </tr>
+            <tr class="page-row">
+                <td>會員管理 <span class="item-type">(頁面)</span></td>
+                <td><code>/driving-range/member-management</code></td>
+                <td><code>練習場-基本操作</code></td>
+            </tr>
+            <tr class="page-row">
+                <td>場地管理 <span class="item-type">(頁面)</span></td>
+                <td><code>/driving-range/site-management</code></td>
+                <td><code>練習場-基本操作</code></td>
+            </tr>
+            <tr class="page-row">
+                <td>預約管理 <span class="item-type">(頁面)</span></td>
+                <td><code>/driving-range/appointment-management</code></td>
+                <td><code>練習場-基本操作</code></td>
+            </tr>
+            <tr class="page-row">
+                <td>儲值優惠設定 <span class="item-type">(頁面)</span></td>
+                <td><code>/driving-range/cashback-settings</code></td>
+                <td><code>練習場-儲值優惠設定</code></td>
+            </tr>
+            <tr class="page-row">
+                <td>優惠券管理 <span class="item-type">(頁面)</span></td>
+                <td><code>/driving-range/coupon-management</code></td>
+                <td><code>練習場-贈送點數</code></td>
+            </tr>
+            <tr class="page-row">
+                <td>累積點數設定 <span class="item-type">(頁面)</span></td>
+                <td><code>/driving-range/reward-settings</code></td>
+                <td><code>練習場-累積點數設定</code></td>
+            </tr>
+            <tr class="page-row">
+                <td>報修回報 <span class="item-type">(頁面)</span></td>
+                <td><code>/driving-range/repair-report</code></td>
+                <td><code>練習場-基本操作</code></td>
+            </tr>
+            <tr class="page-row">
+                <td>報表 <span class="item-type">(頁面)</span></td>
+                <td><code>/driving-range/report</code></td>
+                <td><code>練習場-報表</code></td>
+            </tr>
+        </table>
+    </section>
+
+    <p class="footer">
+        Open in a browser; use Print → Save as PDF or screenshot for PNG. Generated from links.tsx.
+    </p>
+</body>
+
+</html>

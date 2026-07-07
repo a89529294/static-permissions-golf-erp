@@ -1,0 +1,1 @@
+# static-permissions-golf-erp
